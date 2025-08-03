@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShangXiang - 个人主页</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6dd5ed;
+            --secondary-color: #c2e9fb;
+            --bg-color: #0f172a;
+            --text-color: #e2e8f0;
+            --code-color: #a0aec0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .language-switcher {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        nav {
+            margin: 1rem 0;
+        }
+
+        nav a {
+            color: var(--secondary-color);
+            margin: 0 1rem;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        section {
+            max-width: 900px;
+            margin: 3rem auto;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: #1e293b;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .project-card div {
+            padding: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            font-size: 0.9rem;
+            color: var(--code-color);
+            border-top: 1px solid #334155;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 id="name">您的名字</h1>
+        <p id="title">软件工程师 | 开源爱好者 | 技术博客</p>
+        <div class="language-switcher">
+            <button onclick="switchLanguage('zh-CN')">中文</button>
+            <button onclick="switchLanguage('en-US')">English</button>
+        </div>
+        <nav>
+            <a href="#about">关于</a>
+            <a href="#projects">项目</a>
+            <a href="#contact">联系</a>
+        </nav>
+    </header>
+
+    <section id="about">
+        <div class="card">
+            <h2 id="about-title">👋 你好！</h2>
+            <p id="about-text">我是一个热爱编程的开发者，专注于前端开发和开源技术。这个页面展示了我的最新项目和个人成就。</p>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 id="projects-title">📦 我的项目</h2>
+        <div class="project-grid">
+            <div class="project-card">
+                <img src="https://via.placeholder.com/300x150" alt="项目缩略图">
+                <div>
+                    <h3 id="project1-name">项目名称 1</h3>
+                    <p id="project1-desc">使用 React 和 TypeScript 构建的现代 Web 应用</p>
+                </div>
+            </div>
+            <div class="project-card">
+                <img src="https://via.placeholder.com/300x150" alt="项目缩略图">
+                <div>
+                    <h3 id="project2-name">项目名称 2</h3>
+                    <p id="project2-desc">基于 Python 的机器学习工具包</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="card">
+            <h2 id="contact-title">📧 联系方式</h2>
+            <ul>
+                <li>Email: <a id="email" href="mailto:you@example.com">you@example.com</a></li>
+                <li>GitHub: <a id="github" href="https://github.com/yourusername" target="_blank">yourusername</a></li>
+                <li>LinkedIn: <a id="linkedin" href="https://linkedin.com/in/yourprofile" target="_blank">yourprofile</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p id="footer-text">© 2023 您的名字. 保留所有权利.</p>
+    </footer>
+
+    <script>
+        const translations = {
+            'zh-CN': {
+                name: '您的名字',
+                title: '软件工程师 | 开源爱好者 | 技术博客',
+                aboutTitle: '👋 你好！',
+                aboutText: '我是一个热爱编程的开发者，专注于前端开发和开源技术。这个页面展示了我的最新项目和个人成就。',
+                projectsTitle: '📦 我的项目',
+                project1Name: '项目名称 1',
+                project1Desc: '使用 React 和 TypeScript 构建的现代 Web 应用',
+                project2Name: '项目名称 2',
+                project2Desc: '基于 Python 的机器学习工具包',
+                contactTitle: '📧 联系方式',
+                email: 'you@example.com',
+                github: 'yourusername',
+                linkedin: 'yourprofile',
+                footerText: '© 2023 您的名字. 保留所有权利.'
+            },
+            'en-US': {
+                name: 'Your Name',
+                title: 'Software Engineer | Open Source Enthusiast | Tech Blogger',
+                aboutTitle: '👋 Hello!',
+                aboutText: 'I am a passionate developer focused on front-end development and open-source technologies. This page showcases my latest projects and achievements.',
+                projectsTitle: '📦 My Projects',
+                project1Name: 'Project Name 1',
+                project1Desc: 'Modern Web Application built with React and TypeScript',
+                project2Name: 'Project Name 2',
+                project2Desc: 'Machine Learning Toolkit based on Python',
+                contactTitle: '📧 Contact',
+                email: 'you@example.com',
+                github: 'yourusername',
+                linkedin: 'yourprofile',
+                footerText: '© 2023 Your Name. All rights reserved.'
+            }
+        };
+
+        function switchLanguage(lang) {
+            document.documentElement.setAttribute('lang', lang);
+            document.documentElement.setAttribute('data-lang', lang);
+            
+            const current = translations[lang];
+            document.getElementById('name').textContent = current.name;
+            document.getElementById('title').textContent = current.title;
+            document.getElementById('about-title').textContent = current.aboutTitle;
+            document.getElementById('about-text').textContent = current.aboutText;
+            document.getElementById('projects-title').textContent = current.projectsTitle;
+            document.getElementById('project1-name').textContent = current.project1Name;
+            document.getElementById('project1-desc').textContent = current.project1Desc;
+            document.getElementById('project2-name').textContent = current.project2Name;
+            document.getElementById('project2-desc').textContent = current.project2Desc;
+            document.getElementById('contact-title').textContent = current.contactTitle;
+            document.getElementById('email').textContent = current.email;
+            document.getElementById('github').textContent = current.github;
+            document.getElementById('linkedin').textContent = current.linkedin;
+            document.getElementById('footer-text').textContent = current.footerText;
+        }
+
+        // 恢复用户语言偏好
+        window.onload = () => {
+            const savedLang = localStorage.getItem('lang') || 'zh-CN';
+            switchLanguage(savedLang);
+        };
+    </script>
+</body>
+</html>
