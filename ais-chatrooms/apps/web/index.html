@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AIS Chatrooms (MVP)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; margin: 0; padding: 0; background:#0f172a; color:#e2e8f0;}
+    header { padding: 12px 16px; border-bottom: 1px solid #334155; display:flex; align-items:center; justify-content:space-between;}
+    main { display:flex; height: calc(100vh - 56px);} 
+    #sidebar { width: 280px; border-right: 1px solid #334155; padding:12px; }
+    #timeline { flex:1; display:flex; flex-direction:column; }
+    #messages { flex:1; padding:16px; overflow:auto; }
+    #composer { display:flex; gap:8px; padding:12px; border-top:1px solid #334155; }
+    textarea { flex:1; background:#0b1220; color:#e2e8f0; border:1px solid #334155; border-radius:8px; padding:10px; resize:vertical; }
+    button { background:#1f2937; color:#e5e7eb; border:1px solid #334155; border-radius:8px; padding:8px 12px; cursor:pointer; }
+    .bubble { margin: 10px 0; padding:10px 12px; border-radius:10px; max-width: 80%; white-space: pre-wrap;}
+    .human { background:#1e293b; align-self:flex-end; }
+    .agent { background:#0b1220; border:1px solid #334155; align-self:flex-start; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <strong>AIS Chatrooms</strong>
+      <small style="opacity:.7; margin-left:8px;">MVP</small>
+    </div>
+    <div>
+      <button id="createRoomBtn">Create Room</button>
+      <button id="autoBtn">Auto: Off</button>
+    </div>
+  </header>
+  <main>
+    <aside id="sidebar">
+      <div><strong>Room</strong>: <span id="roomId">(none)</span></div>
+      <div style="margin-top:12px; opacity:.8;">Agents (placeholder)</div>
+      <ul id="agents"></ul>
+    </aside>
+    <section id="timeline">
+      <div id="messages"></div>
+      <div id="composer">
+        <textarea id="input" rows="2" placeholder="Type a message..."></textarea>
+        <button id="sendBtn">Send</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let roomId = null;
+    let es = null;
+    const messagesEl = document.getElementById('messages');
+    const roomIdEl = document.getElementById('roomId');
+    const inputEl = document.getElementById('input');
+    const autoBtn = document.getElementById('autoBtn');
+
+    function addBubble(text, cls){
+      const div = document.createElement('div');
+      div.className = 'bubble ' + cls;
+      div.textContent = text;
+      messagesEl.appendChild(div);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    async function createRoom(){
+      const res = await fetch('/api/rooms', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:'Demo', mode:'manual'})});
+      const data = await res.json();
+      roomId = data.id; roomIdEl.textContent = String(roomId);
+      startStream();
+      loadHistory();
+    }
+
+    async function loadHistory(){
+      if(!roomId) return;
+      const res = await fetch(`/api/rooms/${roomId}/messages`);
+      const data = await res.json();
+      messagesEl.innerHTML = '';
+      for(const m of data){ addBubble((m.sender_type==='human'? 'You: ' : 'AI: ') + m.content, m.sender_type==='human'?'human':'agent'); }
+    }
+
+    function startStream(){
+      if(es){ es.close(); }
+      es = new EventSource(`/api/rooms/${roomId}/stream`);
+      es.onmessage = (ev)=>{
+        try { const d = JSON.parse(ev.data); handleEvent(d); } catch(e){ /* ignore */ }
+      };
+      es.onerror = ()=>{ setTimeout(()=> startStream(), 1000); };
+    }
+
+    function handleEvent(d){
+      if(d.type === 'message.delta'){
+        // naive: append tokens as separate bubbles
+        addBubble('AI: ' + d.delta, 'agent');
+      }
+    }
+
+    document.getElementById('createRoomBtn').onclick = createRoom;
+
+    document.getElementById('sendBtn').onclick = async ()=>{
+      const text = inputEl.value.trim();
+      if(!text || !roomId) return;
+      addBubble('You: ' + text, 'human');
+      inputEl.value = '';
+      await fetch(`/api/rooms/${roomId}/messages`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({content: text})});
+    };
+
+    autoBtn.onclick = ()=>{
+      autoBtn.textContent = autoBtn.textContent === 'Auto: Off' ? 'Auto: On' : 'Auto: Off';
+      // placeholder; backend auto mode to be wired later
+    };
+  </script>
+</body>
+</html>
